@@ -18,3 +18,13 @@ E:\Workspace\C#\MathParser\MathmaticalExpression\MathmaticalExpression\obj\Debug
 E:\Workspace\C#\MathParser\MathmaticalExpression\MathmaticalExpression\bin\Debug\MathmaticalExpression.exe.config
 E:\Workspace\C#\MathParser\MathmaticalExpression\MathmaticalExpression\bin\Debug\MathmaticalExpression.exe
 E:\Workspace\C#\MathParser\MathmaticalExpression\MathmaticalExpression\bin\Debug\MathmaticalExpression.pdb
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\bin\Debug\MathmaticalExpression.exe.config
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\bin\Debug\MathmaticalExpression.exe
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\bin\Debug\MathmaticalExpression.pdb
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.csprojResolveAssemblyReference.cache
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.frmMain.resources
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.Properties.Resources.resources
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.csproj.GenerateResource.Cache
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.csproj.CoreCompileInputs.cache
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.exe
+E:\Workspace\C#\MathParser\MathExpressionParser\MathmaticalExpression\obj\Debug\MathmaticalExpression.pdb

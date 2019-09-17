@@ -14,9 +14,10 @@ namespace MathmaticalExpression
     {
         public string ExprString;
         public int LexPos;
-        public int LexicalAttribute;
+        public double LexicalAttribute;
         public string LexicalAttribute2;
         public string PostFixString;
+        public List<string> PostFixQueue;
         public int Given;
 
         public const int NONE = 0;
@@ -41,8 +42,9 @@ namespace MathmaticalExpression
         {
             Given = 0;
             LexPos = 0;
-            ExprString = txtExpression.Text;
+            ExprString = txtExpression.Text.ToUpper();
             PostFixString = "";
+            PostFixQueue = new List<string>();
         }
 
         private string LexicalAnalyzer()
@@ -111,14 +113,14 @@ namespace MathmaticalExpression
                         }
                         else if (IsNumber(ExprString[LexPos - 1].ToString()))
                         {
-                            while (IsNumber(ExprString[LexPos - 1].ToString()))
+                            while (IsNumber(ExprString[LexPos - 1].ToString()) || ExprString[LexPos - 1].ToString() == ".")
                             {
                                 Temp = Temp + ExprString[LexPos - 1].ToString();
                                 LexPos++;
                                 if (LexPos > ExprString.Length)
                                     break;
                             }
-                            LexicalAttribute = Convert.ToInt32(Temp);
+                            LexicalAttribute = Convert.ToDouble(Temp);
                             LexPos = LexPos - 1;
                             return "NUM";
                         }
@@ -331,7 +333,7 @@ namespace MathmaticalExpression
             }
         }
 
-        private void AddToPostFix(string TokenVal, int TokenAttr)
+        private void AddToPostFix(string TokenVal, double TokenAttr)
         {
             switch(TokenVal)
             {
@@ -342,13 +344,16 @@ namespace MathmaticalExpression
                 case "*":
                 case "MOD":
                     PostFixString = PostFixString + TokenVal;
+                    PostFixQueue.Add(TokenVal);
                     break;
                 case "NUM":
                 case "ID":
                     PostFixString = PostFixString + TokenAttr.ToString() + " ";
+                    PostFixQueue.Add(TokenAttr.ToString());
                     break;
                 default:
                     PostFixString = PostFixString + TokenVal + " ";
+                    PostFixQueue.Add(TokenVal);
                     break;
             }
         }
@@ -403,6 +408,164 @@ namespace MathmaticalExpression
             ParseAll();
             Console.Write(PostFixString);
             txtResult.Text = PostFixString;
+            txtValue.Text = Calculate();
+        }
+
+        private string Calculate()
+        {
+            for(int i = 0; i < PostFixQueue.Count; i++)
+            {
+                switch(PostFixQueue[i])
+                {
+                    case "+":
+                        PostFixQueue[i] = (Convert.ToDouble(PostFixQueue[i - 2]) + Convert.ToDouble(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 2);
+                        PostFixQueue.RemoveAt(i - 2);
+                        i -= 2;
+                        break;
+                    case "-":
+                        PostFixQueue[i] = (Convert.ToDouble(PostFixQueue[i - 2]) - Convert.ToDouble(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 2);
+                        PostFixQueue.RemoveAt(i - 2);
+                        i -= 2;
+                        break;
+                    case "/":
+                        PostFixQueue[i] = (Convert.ToDouble(PostFixQueue[i - 2]) / Convert.ToDouble(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 2);
+                        PostFixQueue.RemoveAt(i - 2);
+                        i -= 2;
+                        break;
+                    case "\\":
+                        PostFixQueue[i] = (Convert.ToInt32(PostFixQueue[i - 2]) / Convert.ToInt32(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 2);
+                        PostFixQueue.RemoveAt(i - 2);
+                        i -= 2;
+                        break;
+                    case "*":
+                        PostFixQueue[i] = (Convert.ToDouble(PostFixQueue[i - 2]) * Convert.ToDouble(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 2);
+                        PostFixQueue.RemoveAt(i - 2);
+                        i -= 2;
+                        break;
+                    case "MOD":
+                        PostFixQueue[i] = (Convert.ToInt32(PostFixQueue[i - 2]) % Convert.ToInt32(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 2);
+                        PostFixQueue.RemoveAt(i - 2);
+                        i -= 2;
+                        break;
+                    case "SQR":
+                        PostFixQueue[i] = (Math.Sqrt(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "SQUARE":
+                        PostFixQueue[i] = (Math.Pow(Convert.ToDouble(PostFixQueue[i - 1]), 2)).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "CUBE":
+                        PostFixQueue[i] = (Math.Pow(Convert.ToDouble(PostFixQueue[i - 1]), 3)).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "INT":
+                        PostFixQueue[i] = (Convert.ToInt32(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "FIX":
+                        PostFixQueue[i] = (Convert.ToInt32(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "ROUND":
+                        PostFixQueue[i] = (Math.Round(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "RND":
+                        Random rnd = new Random();
+                        int value = rnd.Next(0, Convert.ToInt32(PostFixQueue[i - 1]));
+                        PostFixQueue[i] = value.ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "ABS":
+                        PostFixQueue[i] = (Math.Abs(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "SGN":
+                        PostFixQueue[i] = (Math.Sign(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "REPROC":
+                        PostFixQueue[i] = (Math.Sign(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "INVSGN":
+                        PostFixQueue[i] = (Convert.ToDouble(PostFixQueue[i - 1])).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "FACT":
+                        break;
+                    case "SIN":
+                        PostFixQueue[i] = (Math.Sin(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "COS":
+                        PostFixQueue[i] = (Math.Cos(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "TAN":
+                        PostFixQueue[i] = (Math.Tan(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "SEC":
+                        PostFixQueue[i] = (1.0 / Math.Cos(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "COSEC":
+                        PostFixQueue[i] = (1.0 / Math.Sin(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "COT":
+                        PostFixQueue[i] = (1.0 / Math.Tan(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "HSIN":
+                        PostFixQueue[i] = (1.0 / Math.Sinh(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "HCOS":
+                        PostFixQueue[i] = (1.0 / Math.Cosh(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "HTAN":
+                        PostFixQueue[i] = (1.0 / Math.Tanh(Convert.ToDouble(PostFixQueue[i - 1]))).ToString();
+                        PostFixQueue.RemoveAt(i - 1);
+                        i -= 1;
+                        break;
+                    case "HSEC":
+                        break;
+                    case "HCOSEC":
+                        break;
+                    case "HCOT":
+                        break;
+                }
+            }
+            return PostFixQueue.Last();
         }
     }
 }
